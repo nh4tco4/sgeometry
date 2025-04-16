@@ -1,7 +1,19 @@
-\ProvidesPackage{sgeometry} \RequirePackage{tikz} \RequirePackage{ifthen} \RequirePackage{xkeyval} \RequirePackage{etoolbox} \define@key{sgeometry}{shape}{\def\sg@shape{#1}} \define@key{sgeometry}{label}{\def\sg@label{#1}} \define@key{sgeometry}{offset}{\def\sg@offset{#1}} \define@key{sgeometry}{style}{\def\sg@style{#1}}
+\ProvidesPackage{sgeometry}
+\RequirePackage{tikz}
+\RequirePackage{ifthen}
+\RequirePackage{xkeyval}
+\RequirePackage{etoolbox}
+
+\define@key{sgeometry}{shape}{\def\sg@shape{#1}}
+\define@key{sgeometry}{label}{\def\sg@label{#1}}
+\define@key{sgeometry}{offset}{\def\sg@offset{#1}}
+\define@key{sgeometry}{style}{\def\sg@style{#1}}
 \define@key{sgeometry}{count}{\def\sg@count{#1}}
 \define@key{sgeometry}{shift}{\def\sg@shift{#1}}
 \define@key{sgeometry}{fill}{\def\sg@fill{#1}}
+\define@key{sgeometry}{color}{\def\sg@color{#1}}
+\define@key{sgeometry}{fillopacity}{\def\sg@fillopacity{#1}}
+\define@key{sgeometry}{radius}{\def\sg@radius{#1}}
 
 \newcommand{\Angle}[4][]{%
     \def\sg@label{}%
@@ -10,6 +22,7 @@
     \def\sg@count{1}%
     \def\sg@shift{0,0}%
     \def\sg@fill{}%
+    \def\sg@fillopacity{0.1}%
     \setkeys{sgeometry}{#1}%
     \ifx\sg@fill\empty%
       \foreach \i in {1,...,\sg@count} {%
@@ -19,10 +32,10 @@
     \else%
       \foreach \i in {\sg@count,...,1} {%
           \pgfmathsetmacro{\radius}{0.6cm + (\i-1)*0.2cm + \sg@offset}%
-          \draw[\sg@style] pic[draw, angle radius=\radius, fill=\sg@fill] {angle=#2--#3--#4};%
+          \draw[\sg@style] pic[draw, angle radius=\radius, fill=\sg@fill, fill opacity=\sg@fillopacity] {angle=#2--#3--#4};%
       }%
     \fi
-    \ifx\sg@label\empty\else%
+    \ifx\sg@label\empty \else%
       \node[\sg@style] at ($(#3) + (\sg@shift)$) {\sg@label};
 }
 
@@ -41,7 +54,6 @@
 }
 
 \newcommand{\MarkSide}[3][]{%
-
   \def\sg@style{black}%
   \def\sg@shape{single line}%
   \setkeys{sgeometry}{#1}%
@@ -82,6 +94,15 @@
     },
     postaction={decorate}%
   ] (#2) -- (#3);%
+}
+
+\newcommand{\Point}[2][] {%
+  \def\sg@color{red}%
+  \def\sg@radius{2pt}%
+  \setkeys{sgeometry}{#1}%
+  \foreach \point in {#2} {%
+    \fill[\sg@color] (\point) circle (\sg@radius);%
+  }%
 }
 
 \endinput
